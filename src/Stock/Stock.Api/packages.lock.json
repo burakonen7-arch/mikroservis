@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "Microsoft.EntityFrameworkCore": {
+        "type": "Transitive",
+        "resolved": "10.0.11",
+        "contentHash": "VOSGU8en6HZJs8t7UMFN+9vGcRgVOOn6fA44Ngcg2NyvJ3P1KE94iAb0XzaVaGhXGtt+qaM/VtEn0/hzluQJeg==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Abstractions": "10.0.11",
+          "Microsoft.EntityFrameworkCore.Analyzers": "10.0.11"
+        }
+      },
+      "Microsoft.EntityFrameworkCore.Abstractions": {
+        "type": "Transitive",
+        "resolved": "10.0.11",
+        "contentHash": "6auJR+9+9VunznKfH7WGrHMrnrmA0F7JZ22EXzwXvVhjfnbu9Xq7NSIWaOf3KJsOanM2qf5ajJ2JR5TlcPZTLA=="
+      },
+      "Microsoft.EntityFrameworkCore.Analyzers": {
+        "type": "Transitive",
+        "resolved": "10.0.11",
+        "contentHash": "Bv7X4wSSnzCQED9WYXKJ8fwgyvKwf0xZM1GO8xkf6CF9zl+UBnvjxmcPnokJRy0JKjc1SlHSzzhx1HcL4jitTQ=="
+      },
+      "Microsoft.EntityFrameworkCore.Relational": {
+        "type": "Transitive",
+        "resolved": "10.0.11",
+        "contentHash": "grznnTJgEYxaWpdKAsTzg6j+89jHgCXWYp+QGtlX5O92+w/VuhWM6JLPYb+uw8M9VhGUvOTsO76dYOy9vNPd5Q==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "10.0.11"
+        }
+      },
+      "Microsoft.Extensions.Caching.StackExchangeRedis": {
+        "type": "Transitive",
+        "resolved": "10.0.11",
+        "contentHash": "0SCQuU1m+BcLMjyh6q1X9j0hongN9EZx9KhgDyPgHxVa5RJ5xuHBkvcgnX95KSa5bQlkYupeQFu8IAI3NgPIUQ==",
+        "dependencies": {
+          "StackExchange.Redis": "2.7.27"
+        }
+      },
+      "OpenTelemetry": {
+        "type": "Transitive",
+        "resolved": "1.19.0",
+        "contentHash": "tH3Y3ABOCcUXbnz/jntnfEXcSxEy+GzS2niNqwJPIcNdAYUpP09QHLaAwcJExeS+ibfmlcSkmIfWlKhe7yVjIA==",
+        "dependencies": {
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "1.19.0"
+        }
+      },
+      "OpenTelemetry.Api": {
+        "type": "Transitive",
+        "resolved": "1.19.0",
+        "contentHash": "ZupI0cvo9Jyk2IwLLMrXQm3PvX67tCBIiFws5fslm2Xw7gYctq5wZiGPS+mKmMususAAE9+jyv5Jp7ADxdZDJw=="
+      },
+      "OpenTelemetry.Api.ProviderBuilderExtensions": {
+        "type": "Transitive",
+        "resolved": "1.19.0",
+        "contentHash": "V+nYo7IIqH7cXagkERfGZUNstdoZQkplpn+hZMkLBlJ0ZJNQBvTMv2Cvjq8eqqxkB9lmBw+CUH78hWxJB1Vdcg==",
+        "dependencies": {
+          "OpenTelemetry.Api": "1.19.0"
+        }
+      },
+      "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
+        "type": "Transitive",
+        "resolved": "1.19.0",
+        "contentHash": "x1QtTiMXvM4POUv92FX0S3KPLCwaFpZ76NwNsd4Os7jWDT+oESkfDSdP7JisoTdMP3x+s4xjXlc7eXEuU5SBMw==",
+        "dependencies": {
+          "OpenTelemetry": "1.19.0"
+        }
+      },
+      "OpenTelemetry.Extensions.Hosting": {
+        "type": "Transitive",
+        "resolved": "1.19.0",
+        "contentHash": "XmjQIPG36zgkpc2nYkveQvmVe7zqffmXG+/7rGlE67Be59clUlPyJA8NKMi1XeZheoNkQG6SZcZ5NykzGRHrdA==",
+        "dependencies": {
+          "OpenTelemetry": "1.19.0"
+        }
+      },
+      "OpenTelemetry.Instrumentation.AspNetCore": {
+        "type": "Transitive",
+        "resolved": "1.19.0",
+        "contentHash": "reypo7g0Nzyssg1EkbfWU6W58CVFgtgkSEGrFXtbpA+bNit7HUs7587DOkOdPCgqWr3IL4f6X9B2yhnU6POrFA==",
+        "dependencies": {
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.19.0, 2.0.0)"
+        }
+      },
+      "OpenTelemetry.Instrumentation.Http": {
+        "type": "Transitive",
+        "resolved": "1.19.0",
+        "contentHash": "+egJpWBRfYP3ldfexV2bmJyzOWkkOPVYikw/vUEtbUvf2exJfY3RGInXrYlubhBIH6rmNEn6sI/FmqenZJwkjw==",
+        "dependencies": {
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.19.0, 2.0.0)"
+        }
+      },
+      "Oracle.EntityFrameworkCore": {
+        "type": "Transitive",
+        "resolved": "10.23.26301",
+        "contentHash": "aX2QPJmfnb2m4gIpJuKuGwXwUhi1xg1F+iU/O7LSbmT5Kk2ICjKVNISDx7pFv0ohfGJz79DwfLswg1Q4aRjZHw==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.Relational": "[10.0.0, 11.0.0)",
+          "Oracle.ManagedDataAccess.Core": "[23.26.301, 24.0.0)"
+        }
+      },
+      "Oracle.ManagedDataAccess.Core": {
+        "type": "Transitive",
+        "resolved": "23.26.301",
+        "contentHash": "hhl6m5sam9vWNXt4Xad+bAcB+VBMBxya16/P+R3xRMKzNVl/6ssF6HuNZNeofD+5qDaTRqhWbKjdFn65rD5KYw==",
+        "dependencies": {
+          "System.Diagnostics.PerformanceCounter": "8.0.0",
+          "System.DirectoryServices.Protocols": "8.0.2",
+          "System.Security.Cryptography.Pkcs": "8.0.1"
+        }
+      },
+      "Pipelines.Sockets.Unofficial": {
+        "type": "Transitive",
+        "resolved": "2.2.8",
+        "contentHash": "zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ=="
+      },
+      "RabbitMQ.Client": {
+        "type": "Transitive",
+        "resolved": "7.2.2",
+        "contentHash": "k4b6RnTXpLbsF96V93ooNYxgPMnoA2tEm24B6AXNJr1mG8wwNYdA1XJtgU66L5xqeGyveS7SJriRzlX3cbqQNA=="
+      },
+      "StackExchange.Redis": {
+        "type": "Transitive",
+        "resolved": "2.7.27",
+        "contentHash": "Uqc2OQHglqj9/FfGQ6RkKFkZfHySfZlfmbCl+hc+u2I/IqunfelQ7QJi7ZhvAJxUtu80pildVX6NPLdDaUffOw==",
+        "dependencies": {
+          "Pipelines.Sockets.Unofficial": "2.2.8"
+        }
+      },
+      "System.Configuration.ConfigurationManager": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "JlYi9XVvIREURRUlGMr1F6vOFLk7YSY4p1vHo4kX3tQ0AGrjqlRWHDi66ImHhy6qwXBG3BJ6Y1QlYQ+Qz6Xgww==",
+        "dependencies": {
+          "System.Security.Cryptography.ProtectedData": "8.0.0"
+        }
+      },
+      "System.Diagnostics.PerformanceCounter": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "lX6DXxtJqVGWw7N/QmVoiCyVQ+Q/Xp+jVXPr3gLK1jJExSn1qmAjJQeb8gnOYeeBTG3E3PmG1nu92eYj/TEjpg==",
+        "dependencies": {
+          "System.Configuration.ConfigurationManager": "8.0.0"
+        }
+      },
+      "System.DirectoryServices.Protocols": {
+        "type": "Transitive",
+        "resolved": "8.0.2",
+        "contentHash": "7pSU+qkmdkwbikAvn4kpvClfyffaR7dYJw7ucBtO5d6m/7wgKZIULOZAGFLMIMOFFmg7xC67TYKptHxcbqQm+Q=="
+      },
+      "System.Security.Cryptography.Pkcs": {
+        "type": "Transitive",
+        "resolved": "8.0.1",
+        "contentHash": "CoCRHFym33aUSf/NtWSVSZa99dkd0Hm7OCZUxORBjRB16LNhIEOf8THPqzIYlvKM0nNDAPTRBa1FxEECrgaxxA=="
+      },
+      "System.Security.Cryptography.ProtectedData": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "+TUFINV2q2ifyXauQXRwy4CiBhqvDEDZeVJU7qfxya4aRYOKzVBpN+4acx25VcPB9ywUN6C0n8drWl110PhZEg=="
+      },
+      "buildingblocks": {
+        "type": "Project",
+        "dependencies": {
+          "Contracts": "[1.0.0, )",
+          "Microsoft.EntityFrameworkCore": "[10.0.11, )",
+          "Microsoft.Extensions.Caching.StackExchangeRedis": "[10.0.11, )",
+          "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.19.0, )",
+          "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
+          "OpenTelemetry.Instrumentation.AspNetCore": "[1.19.0, )",
+          "OpenTelemetry.Instrumentation.Http": "[1.19.0, )",
+          "RabbitMQ.Client": "[7.2.2, )"
+        }
+      },
+      "contracts": {
+        "type": "Project"
+      },
+      "stock.application": {
+        "type": "Project",
+        "dependencies": {
+          "Contracts": "[1.0.0, )",
+          "Microsoft.EntityFrameworkCore": "[10.0.11, )",
+          "Stock.Domain": "[1.0.0, )"
+        }
+      },
+      "stock.domain": {
+        "type": "Project"
+      },
+      "stock.infrastructure": {
+        "type": "Project",
+        "dependencies": {
+          "BuildingBlocks": "[1.0.0, )",
+          "Microsoft.EntityFrameworkCore.Relational": "[10.0.11, )",
+          "Oracle.EntityFrameworkCore": "[10.23.26301, )",
+          "Stock.Application": "[1.0.0, )"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,96 @@
+name: mikroservis
+services:
+  mongo:
+    image: mongo:8.0
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports: ["127.0.0.1:27017:27017"]
+    volumes: ["mongo-data:/data/db"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand({ping:1}).ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  mongo-init:
+    image: mongo:8.0
+    depends_on:
+      mongo: {condition: service_healthy}
+    entrypoint: ["mongosh", "--host", "mongo:27017", "--quiet", "--eval", "try { rs.status() } catch(e) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongo:27017'}]}) }; while(!db.hello().isWritablePrimary) { sleep(500) }"]
+  oracle:
+    image: gvenzl/oracle-free:23-slim
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_ADMIN_PASSWORD:?Run scripts/init-env.sh}
+      APP_USER: stock
+      APP_USER_PASSWORD: ${ORACLE_APP_PASSWORD:?Run scripts/init-env.sh}
+    ports: ["127.0.0.1:1521:1521"]
+    volumes: ["oracle-data:/opt/oracle/oradata"]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+  redis:
+    image: redis:7.4-alpine
+    ports: ["127.0.0.1:6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: mikroservis
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Run scripts/init-env.sh}
+    ports: ["127.0.0.1:5672:5672", "127.0.0.1:15672:15672"]
+    volumes: ["rabbit-data:/var/lib/rabbitmq"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.145.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes: ["./observability/collector.yaml:/etc/otelcol/config.yaml:ro"]
+    ports: ["127.0.0.1:4317:4317", "127.0.0.1:4318:4318"]
+  product-api:
+    build:
+      context: .
+      dockerfile: src/Product/Product.Api/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Database: mongodb://mongo:27017/?replicaSet=rs0
+      ConnectionStrings__Redis: redis:6379,abortConnect=false
+      RabbitMQ__Uri: amqp://mikroservis:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      Database__Initialize: "true"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    ports: ["127.0.0.1:5001:8080"]
+    depends_on:
+      mongo-init: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+      otel-collector: {condition: service_started}
+  stock-api:
+    build:
+      context: .
+      dockerfile: src/Stock/Stock.Api/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Database: User Id=stock;Password=${ORACLE_APP_PASSWORD};Data Source=oracle:1521/FREEPDB1
+      ConnectionStrings__Redis: redis:6379,abortConnect=false
+      RabbitMQ__Uri: amqp://mikroservis:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      Database__Initialize: "true"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    ports: ["127.0.0.1:5002:8080"]
+    depends_on:
+      oracle: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+      otel-collector: {condition: service_started}
+volumes:
+  mongo-data:
+  oracle-data:
+  rabbit-data:

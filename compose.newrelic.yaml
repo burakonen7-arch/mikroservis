@@ -1,0 +1,8 @@
+services:
+  otel-collector:
+    volumes: ["./observability/collector.newrelic.yaml:/etc/otelcol/config.yaml:ro"]
+    environment:
+      NEW_RELIC_LICENSE_KEY: ${NEW_RELIC_LICENSE_KEY:?Set your New Relic ingest license key securely}
+      NEW_RELIC_OTLP_ENDPOINT: ${NEW_RELIC_OTLP_ENDPOINT:-https://otlp.nr-data.net:4318}
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      HTTP_PROXY: ${HTTP_PROXY:-}
