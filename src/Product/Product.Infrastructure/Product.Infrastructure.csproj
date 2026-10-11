@@ -1,1 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><ProjectReference Include="../Product.Application/Product.Application.csproj" /><ProjectReference Include="../../BuildingBlocks/BuildingBlocks.csproj" /><PackageReference Include="MongoDB.EntityFrameworkCore" Version="10.0.4" /></ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Product.Application/Product.Application.csproj" />
+    <ProjectReference Include="../Product.Domain/Product.Domain.csproj" />
+    <ProjectReference Include="../../Shared.Application/Shared.Application.csproj" />
+    <ProjectReference Include="../../Contracts/Contracts.csproj" />
+    <ProjectReference Include="../../BuildingBlocks/BuildingBlocks.csproj" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" Version="10.0.4" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,32 @@
+<Project>
+  <Target Name="ValidateCleanArchitecture" BeforeTargets="ResolveProjectReferences">
+    <PropertyGroup>
+      <IsDomainProject>$([System.String]::Copy('$(MSBuildProjectName)').EndsWith('.Domain'))</IsDomainProject>
+      <IsApplicationProject>$([System.String]::Copy('$(MSBuildProjectName)').EndsWith('.Application'))</IsApplicationProject>
+    </PropertyGroup>
+    <ItemGroup>
+      <ExternalFrameworkReference Include="@(FrameworkReference)"
+        Condition="'%(FrameworkReference.Identity)' != 'Microsoft.NETCore.App'" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Product.Application'">
+      <InvalidCoreReference Include="@(ProjectReference)"
+        Condition="'%(ProjectReference.Filename)' != 'Product.Domain' And '%(ProjectReference.Filename)' != 'Shared.Application'" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Stock.Application'">
+      <InvalidCoreReference Include="@(ProjectReference)"
+        Condition="'%(ProjectReference.Filename)' != 'Stock.Domain' And '%(ProjectReference.Filename)' != 'Shared.Application'" />
+    </ItemGroup>
+
+    <Error Condition="'$(IsDomainProject)' == 'True' And ('@(ProjectReference)' != '' Or '@(PackageReference)' != '' Or '@(ExternalFrameworkReference)' != '')"
+      Text="Domain projects must remain independent of other projects and external frameworks." />
+    <Error Condition="'@(InvalidCoreReference)' != ''"
+      Text="Application may reference only its own Domain and Shared.Application: @(InvalidCoreReference)." />
+    <Error Condition="'$(IsApplicationProject)' == 'True' And ('@(PackageReference)' != '' Or '@(ExternalFrameworkReference)' != '')"
+      Text="Application projects in this solution must remain framework independent. Register services in Infrastructure." />
+    <Error Condition="'$(MSBuildProjectName)' == 'Shared.Application' And '@(ProjectReference)' != ''"
+      Text="Shared.Application must not reference service or infrastructure projects." />
+    <Error Condition="'$(MSBuildProjectName)' == 'Contracts' And ('@(ProjectReference)' != '' Or '@(PackageReference)' != '' Or '@(ExternalFrameworkReference)' != '')"
+      Text="Contracts must contain only framework independent integration messages." />
+  </Target>
+</Project>

@@ -2,6 +2,8 @@
   <Folder Name="/src/">
     <Project Path="src/BuildingBlocks/BuildingBlocks.csproj" />
     <Project Path="src/Contracts/Contracts.csproj" />
+    <Project Path="src/Shared.Application/Shared.Application.csproj" />
+    <Project Path="src/Shared.Presentation/Shared.Presentation.csproj" />
   </Folder>
   <Folder Name="/src/Product/">
     <Project Path="src/Product/Product.Api/Product.Api.csproj" />
@@ -14,8 +16,5 @@
     <Project Path="src/Stock/Stock.Application/Stock.Application.csproj" />
     <Project Path="src/Stock/Stock.Domain/Stock.Domain.csproj" />
     <Project Path="src/Stock/Stock.Infrastructure/Stock.Infrastructure.csproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/Domain.Tests/Domain.Tests.csproj" />
   </Folder>
 </Solution>

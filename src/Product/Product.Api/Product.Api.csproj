@@ -1,1 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Web"><ItemGroup><ProjectReference Include="../Product.Infrastructure/Product.Infrastructure.csproj" /></ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../Product.Application/Product.Application.csproj" />
+    <ProjectReference Include="../Product.Infrastructure/Product.Infrastructure.csproj" />
+    <ProjectReference Include="../../Shared.Presentation/Shared.Presentation.csproj" />
+  </ItemGroup>
+</Project>

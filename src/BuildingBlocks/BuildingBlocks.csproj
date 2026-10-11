@@ -1,1 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><ProjectReference Include="../Contracts/Contracts.csproj" /><PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" /><PackageReference Include="RabbitMQ.Client" Version="7.2.2" /><PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.11" /><PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.19.0" /><PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.0" /><PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.19.0" /><PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.19.0" /></ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Contracts/Contracts.csproj" />
+    <ProjectReference Include="../Shared.Application/Shared.Application.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.11" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.19.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.19.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.19.0" />
+  </ItemGroup>
+</Project>

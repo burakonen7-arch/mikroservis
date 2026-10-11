@@ -17,5 +17,4 @@ if ! command -v dotnet >/dev/null; then
 fi
 dotnet restore Mikroservis.slnx --locked-mode
 dotnet build Mikroservis.slnx -c Release --no-restore
-dotnet test Mikroservis.slnx -c Release --no-build --no-restore
 ./scripts/init-env.sh

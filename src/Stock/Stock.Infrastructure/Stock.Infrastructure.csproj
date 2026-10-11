@@ -1,1 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><ProjectReference Include="../Stock.Application/Stock.Application.csproj" /><ProjectReference Include="../../BuildingBlocks/BuildingBlocks.csproj" /><PackageReference Include="Oracle.EntityFrameworkCore" Version="10.23.26301" /><PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11"><PrivateAssets>all</PrivateAssets></PackageReference><PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" /></ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Stock.Application/Stock.Application.csproj" />
+    <ProjectReference Include="../Stock.Domain/Stock.Domain.csproj" />
+    <ProjectReference Include="../../Shared.Application/Shared.Application.csproj" />
+    <ProjectReference Include="../../Contracts/Contracts.csproj" />
+    <ProjectReference Include="../../BuildingBlocks/BuildingBlocks.csproj" />
+    <PackageReference Include="Oracle.EntityFrameworkCore" Version="10.23.26301" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

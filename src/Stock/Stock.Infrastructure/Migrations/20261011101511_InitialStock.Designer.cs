@@ -25,7 +25,7 @@ namespace Stock.Infrastructure.Migrations
 
             OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Contracts.OutboxMessage", b =>
+            modelBuilder.Entity("BuildingBlocks.Persistence.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -55,7 +55,7 @@ namespace Stock.Infrastructure.Migrations
                     b.ToTable("OUTBOX", (string)null);
                 });
 
-            modelBuilder.Entity("Stock.Domain.StockItem", b =>
+            modelBuilder.Entity("Stock.Domain.Entities.StockItem", b =>
                 {
                     b.Property<Guid>("ProductId")
                         .ValueGeneratedOnAdd()

@@ -168,17 +168,26 @@
           "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
           "OpenTelemetry.Instrumentation.AspNetCore": "[1.19.0, )",
           "OpenTelemetry.Instrumentation.Http": "[1.19.0, )",
-          "RabbitMQ.Client": "[7.2.2, )"
+          "RabbitMQ.Client": "[7.2.2, )",
+          "Shared.Application": "[1.0.0, )"
         }
       },
       "contracts": {
         "type": "Project"
       },
+      "shared.application": {
+        "type": "Project"
+      },
+      "shared.presentation": {
+        "type": "Project",
+        "dependencies": {
+          "Shared.Application": "[1.0.0, )"
+        }
+      },
       "stock.application": {
         "type": "Project",
         "dependencies": {
-          "Contracts": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore": "[10.0.11, )",
+          "Shared.Application": "[1.0.0, )",
           "Stock.Domain": "[1.0.0, )"
         }
       },
@@ -189,9 +198,12 @@
         "type": "Project",
         "dependencies": {
           "BuildingBlocks": "[1.0.0, )",
+          "Contracts": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.11, )",
           "Oracle.EntityFrameworkCore": "[10.23.26301, )",
-          "Stock.Application": "[1.0.0, )"
+          "Shared.Application": "[1.0.0, )",
+          "Stock.Application": "[1.0.0, )",
+          "Stock.Domain": "[1.0.0, )"
         }
       }
     }

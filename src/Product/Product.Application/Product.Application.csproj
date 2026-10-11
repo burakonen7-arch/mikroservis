@@ -1,1 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><ProjectReference Include="../Product.Domain/Product.Domain.csproj" /><ProjectReference Include="../../Contracts/Contracts.csproj" /><PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" /></ItemGroup></Project>
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Product.Domain/Product.Domain.csproj" />
+    <ProjectReference Include="../../Shared.Application/Shared.Application.csproj" />
+  </ItemGroup>
+</Project>

@@ -156,7 +156,8 @@
           "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
           "OpenTelemetry.Instrumentation.AspNetCore": "[1.19.0, )",
           "OpenTelemetry.Instrumentation.Http": "[1.19.0, )",
-          "RabbitMQ.Client": "[7.2.2, )"
+          "RabbitMQ.Client": "[7.2.2, )",
+          "Shared.Application": "[1.0.0, )"
         }
       },
       "contracts": {
@@ -165,9 +166,8 @@
       "product.application": {
         "type": "Project",
         "dependencies": {
-          "Contracts": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore": "[10.0.11, )",
-          "Product.Domain": "[1.0.0, )"
+          "Product.Domain": "[1.0.0, )",
+          "Shared.Application": "[1.0.0, )"
         }
       },
       "product.domain": {
@@ -177,8 +177,20 @@
         "type": "Project",
         "dependencies": {
           "BuildingBlocks": "[1.0.0, )",
+          "Contracts": "[1.0.0, )",
           "MongoDB.EntityFrameworkCore": "[10.0.4, )",
-          "Product.Application": "[1.0.0, )"
+          "Product.Application": "[1.0.0, )",
+          "Product.Domain": "[1.0.0, )",
+          "Shared.Application": "[1.0.0, )"
+        }
+      },
+      "shared.application": {
+        "type": "Project"
+      },
+      "shared.presentation": {
+        "type": "Project",
+        "dependencies": {
+          "Shared.Application": "[1.0.0, )"
         }
       }
     }

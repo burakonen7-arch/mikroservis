@@ -1,16 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using MongoDB.EntityFrameworkCore.Extensions;
-using Product.Application;
-using Product.Domain;
-using Contracts;
+using Product.Domain.Entities;
+using BuildingBlocks.Persistence;
 namespace Product.Infrastructure;
 
-public sealed class ProductDbContext(DbContextOptions<ProductDbContext> options) : ProductDataContext(options)
+public sealed class ProductDbContext(DbContextOptions<ProductDbContext> options) : DbContext(options)
 {
+    public DbSet<ProductItem> Products => Set<ProductItem>();
+    public DbSet<OutboxMessage> Outbox => Set<OutboxMessage>();
+
     protected override void OnModelCreating(ModelBuilder model)
     {
-        model.Entity<ProductItem>().ToCollection("products"); model.Entity<ProductItem>().HasKey(x => x.Id);
-        model.Entity<ProductItem>().Property(x => x.StockVersion).IsConcurrencyToken();
-        model.Entity<OutboxMessage>().ToCollection("outbox"); model.Entity<OutboxMessage>().HasKey(x => x.Id);
+        model.ApplyConfigurationsFromAssembly(typeof(ProductDbContext).Assembly);
     }
 }
