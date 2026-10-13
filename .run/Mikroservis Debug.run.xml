@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Mikroservis Debug" type="CompoundRunConfigurationType">
+    <toRun name="Product Debug" type="DotNetProject" />
+    <toRun name="Stock Debug" type="DotNetProject" />
+    <toRun name="Gateway Debug" type="DotNetProject" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,10 +1,14 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Stock.Api.Controllers;
 
 [ApiController]
 [Route("health")]
+[AllowAnonymous]
+[DisableRateLimiting]
 public sealed class HealthController(HealthCheckService healthChecks) : ControllerBase
 {
     [HttpGet("live")]

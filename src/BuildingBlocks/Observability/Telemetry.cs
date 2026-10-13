@@ -15,8 +15,10 @@ public static class Telemetry
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddSource("Mikroservis.Messaging")
+                .AddSource("Mikroservis.Application", "Mikroservis.Persistence", "Mikroservis.Cache")
                 .AddOtlpExporter())
             .WithMetrics(metrics => metrics
+                .AddMeter("Mikroservis.Operations")
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddOtlpExporter());

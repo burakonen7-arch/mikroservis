@@ -42,3 +42,6 @@ public sealed class RabbitConnection(IConfiguration configuration) : IAsyncDispo
         gate.Dispose();
     }
 }
+
+// RabbitConnection: RabbitMQ bağlantısını ihtiyaç olduğunda açar ve servis genelinde paylaşır.
+// Eşzamanlı bağlantı açılmasını engeller, otomatik kurtarmayı etkinleştirir ve kapanışta kaynakları temizler.

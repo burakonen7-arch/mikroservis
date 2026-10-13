@@ -37,6 +37,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+  redisinsight:
+    image: redis/redisinsight:3.8.0
+    environment:
+      RI_REDIS_HOST: redis
+      RI_REDIS_PORT: "6379"
+      RI_REDIS_ALIAS: Mikroservis Redis
+    ports: ["127.0.0.1:5540:5540"]
+    volumes: ["redisinsight-data:/data"]
+    depends_on:
+      redis: {condition: service_healthy}
   rabbitmq:
     image: rabbitmq:4.1-management-alpine
     environment:
@@ -54,12 +64,23 @@ services:
     command: ["--config=/etc/otelcol/config.yaml"]
     volumes: ["./observability/collector.yaml:/etc/otelcol/config.yaml:ro"]
     ports: ["127.0.0.1:4317:4317", "127.0.0.1:4318:4318"]
+    depends_on:
+      aspire-dashboard: {condition: service_started}
+  aspire-dashboard:
+    image: mcr.microsoft.com/aspire/dashboard:13.6
+    environment:
+      ASPNETCORE_URLS: http://+:18888
+      ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL: http://+:18889
+      ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: "true"
+    ports: ["127.0.0.1:18888:18888"]
   product-api:
     build:
       context: .
       dockerfile: src/Product/Product.Api/Dockerfile
     environment:
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?Run scripts/init-env.sh or scripts/prepare-debug.ps1}
       ConnectionStrings__Database: mongodb://mongo:27017/?replicaSet=rs0
       ConnectionStrings__Redis: redis:6379,abortConnect=false
       RabbitMQ__Uri: amqp://mikroservis:${RABBITMQ_PASSWORD}@rabbitmq:5672
@@ -77,7 +98,9 @@ services:
       context: .
       dockerfile: src/Stock/Stock.Api/Dockerfile
     environment:
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?Run scripts/init-env.sh or scripts/prepare-debug.ps1}
       ConnectionStrings__Database: User Id=stock;Password=${ORACLE_APP_PASSWORD};Data Source=oracle:1521/FREEPDB1
       ConnectionStrings__Redis: redis:6379,abortConnect=false
       RabbitMQ__Uri: amqp://mikroservis:${RABBITMQ_PASSWORD}@rabbitmq:5672
@@ -90,7 +113,29 @@ services:
       redis: {condition: service_healthy}
       rabbitmq: {condition: service_healthy}
       otel-collector: {condition: service_started}
+  gateway-api:
+    build:
+      context: .
+      dockerfile: src/Gateway/Gateway.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?Run scripts/init-env.sh or scripts/prepare-debug.ps1}
+      DevelopmentAuth__admin__Password: ${AUTH_ADMIN_PASSWORD:?Run scripts/init-env.sh or scripts/prepare-debug.ps1}
+      DevelopmentAuth__reader__Password: ${AUTH_READER_PASSWORD:?Run scripts/init-env.sh or scripts/prepare-debug.ps1}
+      DevelopmentAuth__inventory__Password: ${AUTH_INVENTORY_PASSWORD:?Run scripts/init-env.sh or scripts/prepare-debug.ps1}
+      DevelopmentAuth__catalog__Password: ${AUTH_CATALOG_PASSWORD:?Run scripts/init-env.sh or scripts/prepare-debug.ps1}
+      ReverseProxy__Clusters__product__Destinations__api__Address: http://product-api:8080/
+      ReverseProxy__Clusters__stock__Destinations__api__Address: http://stock-api:8080/
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    ports: ["127.0.0.1:5000:8080"]
+    depends_on:
+      product-api: {condition: service_started}
+      stock-api: {condition: service_started}
+      otel-collector: {condition: service_started}
 volumes:
   mongo-data:
   oracle-data:
   rabbit-data:
+  redisinsight-data:

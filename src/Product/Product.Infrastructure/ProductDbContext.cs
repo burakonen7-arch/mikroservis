@@ -13,3 +13,6 @@ public sealed class ProductDbContext(DbContextOptions<ProductDbContext> options)
         model.ApplyConfigurationsFromAssembly(typeof(ProductDbContext).Assembly);
     }
 }
+
+// ProductDbContext: Ürünleri ve yayımlanmayı bekleyen outbox mesajlarını aynı EF Core bağlamında yönetir.
+// Ürün ve outbox kayıtlarının MongoDB eşlemelerini uygular; birlikte kaydedilmelerini sağlar.

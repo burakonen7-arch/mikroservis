@@ -15,3 +15,6 @@ public sealed class OutboxConfiguration : IEntityTypeConfiguration<OutboxMessage
         builder.Property(message => message.Payload).HasColumnType("CLOB");
     }
 }
+
+// OutboxConfiguration: Stok servisindeki outbox mesajlarını Oracle içindeki OUTBOX tablosuna eşler.
+// Anahtarı, topic ve izleme alanlarının uzunluklarını ve JSON içeriği için CLOB sütun tipini yapılandırır.

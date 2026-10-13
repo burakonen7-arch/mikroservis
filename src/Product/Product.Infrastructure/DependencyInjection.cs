@@ -6,9 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Product.Application.Abstractions;
-using Product.Application.Services;
+using Product.Application.Commands.CreateProduct;
 using Product.Infrastructure.Messaging;
 using Product.Infrastructure.Repositories;
+using Product.Infrastructure.Idempotency;
+using Shared.Application.Abstractions;
+using BuildingBlocks.Observability;
+using Product.Infrastructure.Observability;
 
 namespace Product.Infrastructure;
 
@@ -19,11 +23,20 @@ public static class DependencyInjection
         services.AddDbContext<ProductDbContext>(options =>
             options.UseMongoDB(configuration.GetConnectionString("Database")
                 ?? throw new InvalidOperationException("ConnectionStrings:Database is required."), "products"));
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IProductService, ProductService>();
+        
+        services.AddScoped<IProductReadRepository, ProductReadRepository>();
+        services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
+        services.AddScoped<IRequestTelemetryEnricher, ProductTelemetryEnricher>();
+        services.AddMediatR(options =>
+        {
+            options.RegisterServicesFromAssemblyContaining<CreateProductCommandHandler>();
+            options.AddOpenBehavior(typeof(RequestTelemetryBehavior<,>));
+        });
         services.AddScoped<IMessageHandler, StockChangedHandler>();
         services.AddScoped<IOutboxMessageFactory, ProductOutboxMessageFactory>();
         services.AddServiceInfrastructure<ProductDbContext>(configuration, "product-service", "product:");
+        services.AddScoped<IProductCreationReceiptStore, ProductCreationReceiptStore>();
+        services.AddScoped<IUnitOfWork, ProductUnitOfWork>();
         return services;
     }
 
@@ -41,3 +54,6 @@ public static class DependencyInjection
         await RabbitTopology.EnsureSubscriptionsAsync(services.GetRequiredService<RabbitConnection>(), cancellationToken);
     }
 }
+
+// DependencyInjection: Ürün servisinin veritabanı, repository ve MediatR bağımlılıklarını kaydeder.
+// StockChangedHandler ile ürün outbox fabrikasını bağlar; başlangıçta RabbitMQ aboneliklerini hazırlar.

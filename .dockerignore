@@ -2,3 +2,8 @@
 **/bin
 **/obj
 .env
+.local
+.idea
+*.DotSettings.user
+**/__pycache__
+**/*.pyc

@@ -9,6 +9,9 @@ processors:
     limit_mib: 256
   batch: {}
 exporters:
+  otlp/aspire:
+    endpoint: aspire-dashboard:18889
+    tls: {insecure: true}
   otlphttp/newrelic:
     endpoint: ${env:NEW_RELIC_OTLP_ENDPOINT}
     headers:
@@ -17,6 +20,6 @@ exporters:
     sending_queue: {enabled: true, queue_size: 1000}
 service:
   pipelines:
-    traces: {receivers: [otlp], processors: [memory_limiter, batch], exporters: [otlphttp/newrelic]}
-    metrics: {receivers: [otlp], processors: [memory_limiter, batch], exporters: [otlphttp/newrelic]}
-    logs: {receivers: [otlp], processors: [memory_limiter, batch], exporters: [otlphttp/newrelic]}
+    traces: {receivers: [otlp], processors: [memory_limiter, batch], exporters: [otlphttp/newrelic, otlp/aspire]}
+    metrics: {receivers: [otlp], processors: [memory_limiter, batch], exporters: [otlphttp/newrelic, otlp/aspire]}
+    logs: {receivers: [otlp], processors: [memory_limiter, batch], exporters: [otlphttp/newrelic, otlp/aspire]}

@@ -44,3 +44,6 @@ public sealed class DependencyHealthCheck<TContext>(
         }
     }
 }
+
+// DependencyHealthCheck: Veritabanı, Redis ve RabbitMQ erişimini kontrol ederek servisin hazır olma durumunu bildirir.
+// RabbitMQ kontrolü, paylaşılan bağlantının açık olup olmadığını doğrular.

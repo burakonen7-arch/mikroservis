@@ -5,4 +5,4 @@ namespace Stock.Api.Models;
 
 public sealed record StockAdjustmentRequest(
     [property: JsonRequired] int Delta,
-    [property: JsonRequired, Range(1, long.MaxValue)] long ExpectedVersion);
+    [property: JsonRequired] [Range(1, long.MaxValue)] long ExpectedVersion);

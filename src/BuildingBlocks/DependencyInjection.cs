@@ -35,3 +35,6 @@ public static class DependencyInjection
         return services;
     }
 }
+
+// DependencyInjection: Servislerin ortak altyapı bağımlılıklarını DI konteynerine kaydeder.
+// RabbitMQ bağlantısını, tüketici ve outbox worker servislerini kurar; IOutbox ve IUnitOfWork için aynı scoped nesneyi kullanır.

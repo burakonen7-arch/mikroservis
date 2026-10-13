@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="$(MediatRVersion)" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="$(SwaggerVersion)" />
     <ProjectReference Include="../Product.Application/Product.Application.csproj" />
     <ProjectReference Include="../Product.Infrastructure/Product.Infrastructure.csproj" />
     <ProjectReference Include="../../Shared.Presentation/Shared.Presentation.csproj" />

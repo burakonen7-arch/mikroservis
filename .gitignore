@@ -3,3 +3,7 @@
 .env
 
 .local/
+.idea/
+*.DotSettings.user
+**/__pycache__/
+*.py[cod]

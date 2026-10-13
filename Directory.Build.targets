@@ -17,13 +17,17 @@
       <InvalidCoreReference Include="@(ProjectReference)"
         Condition="'%(ProjectReference.Filename)' != 'Stock.Domain' And '%(ProjectReference.Filename)' != 'Shared.Application'" />
     </ItemGroup>
+    <ItemGroup Condition="'$(IsApplicationProject)' == 'True'">
+      <InvalidApplicationPackage Include="@(PackageReference)"
+        Condition="'%(PackageReference.Identity)' != 'MediatR' Or ('$(MSBuildProjectName)' != 'Product.Application' And '$(MSBuildProjectName)' != 'Stock.Application')" />
+    </ItemGroup>
 
     <Error Condition="'$(IsDomainProject)' == 'True' And ('@(ProjectReference)' != '' Or '@(PackageReference)' != '' Or '@(ExternalFrameworkReference)' != '')"
       Text="Domain projects must remain independent of other projects and external frameworks." />
     <Error Condition="'@(InvalidCoreReference)' != ''"
       Text="Application may reference only its own Domain and Shared.Application: @(InvalidCoreReference)." />
-    <Error Condition="'$(IsApplicationProject)' == 'True' And ('@(PackageReference)' != '' Or '@(ExternalFrameworkReference)' != '')"
-      Text="Application projects in this solution must remain framework independent. Register services in Infrastructure." />
+    <Error Condition="'$(IsApplicationProject)' == 'True' And ('@(InvalidApplicationPackage)' != '' Or '@(ExternalFrameworkReference)' != '')"
+      Text="Application projects may use only MediatR for use-case dispatch; database, HTTP and infrastructure frameworks belong in outer layers." />
     <Error Condition="'$(MSBuildProjectName)' == 'Shared.Application' And '@(ProjectReference)' != ''"
       Text="Shared.Application must not reference service or infrastructure projects." />
     <Error Condition="'$(MSBuildProjectName)' == 'Contracts' And ('@(ProjectReference)' != '' Or '@(PackageReference)' != '' Or '@(ExternalFrameworkReference)' != '')"

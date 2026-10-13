@@ -14,12 +14,18 @@ public sealed class ProductItem
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Product ID is required.", nameof(id));
+
+        Id = id;
+        UpdateDetails(name, price);
+    }
+
+    public void UpdateDetails(string name, decimal price)
+    {
         if (string.IsNullOrWhiteSpace(name) || name.Trim().Length > 200)
             throw new ArgumentException("Name must contain 1–200 characters.", nameof(name));
         if (price < 0 || decimal.Round(price, 2) != price)
             throw new ArgumentException("Price must be nonnegative with at most two decimals.", nameof(price));
 
-        Id = id;
         Name = name.Trim();
         Price = price;
     }

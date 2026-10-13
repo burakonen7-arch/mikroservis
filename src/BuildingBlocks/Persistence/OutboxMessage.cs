@@ -18,3 +18,6 @@ public sealed class OutboxMessage
         Payload = JsonSerializer.Serialize(value)
     };
 }
+
+// OutboxMessage: RabbitMQ üzerinden yayımlanacak olayın topic, JSON içerik, oluşturulma ve gönderilme bilgilerini saklar.
+// TraceParent alanı, olayın yayımlanması sırasında dağıtık izleme bağlamının sürdürülmesini sağlar.

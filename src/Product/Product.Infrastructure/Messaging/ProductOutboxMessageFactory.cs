@@ -15,3 +15,6 @@ public sealed class ProductOutboxMessageFactory : IOutboxMessageFactory
         _ => throw new InvalidOperationException($"Unsupported product event: {applicationEvent.GetType().Name}.")
     };
 }
+
+// ProductOutboxMessageFactory: ProductCreatedEvent olayını servisler arası ProductCreated mesajına dönüştürür.
+// Mesajı product.created topic bilgisiyle outbox kaydı olarak hazırlar; desteklenmeyen olayları reddeder.

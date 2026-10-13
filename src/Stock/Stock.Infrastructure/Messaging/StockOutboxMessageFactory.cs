@@ -15,3 +15,6 @@ public sealed class StockOutboxMessageFactory : IOutboxMessageFactory
         _ => throw new InvalidOperationException($"Unsupported stock event: {applicationEvent.GetType().Name}.")
     };
 }
+
+// StockOutboxMessageFactory: StockChangedEvent olayını servisler arası StockChanged mesajına dönüştürür.
+// Mesajı stock.changed topic bilgisiyle outbox kaydı olarak hazırlar; desteklenmeyen olayları reddeder.

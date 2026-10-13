@@ -13,3 +13,5 @@ public sealed class OutboxConfiguration : IEntityTypeConfiguration<OutboxMessage
         builder.HasKey(message => message.Id);
     }
 }
+
+// OutboxConfiguration: Ürün servisindeki outbox mesajlarını MongoDB içindeki outbox koleksiyonuna eşler ve Id alanını anahtar olarak tanımlar.

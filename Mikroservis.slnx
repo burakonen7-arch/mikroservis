@@ -11,6 +11,9 @@
     <Project Path="src/Product/Product.Domain/Product.Domain.csproj" />
     <Project Path="src/Product/Product.Infrastructure/Product.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Gateway/">
+    <Project Path="src/Gateway/Gateway.Api/Gateway.Api.csproj" />
+  </Folder>
   <Folder Name="/src/Stock/">
     <Project Path="src/Stock/Stock.Api/Stock.Api.csproj" />
     <Project Path="src/Stock/Stock.Application/Stock.Application.csproj" />

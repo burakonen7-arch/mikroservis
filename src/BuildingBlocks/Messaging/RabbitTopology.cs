@@ -14,6 +14,7 @@ public static class RabbitTopology
         // Both subscriptions must exist before either service publishes its first event.
         await using var channel = await (await rabbit.GetAsync(cancellationToken))
             .CreateChannelAsync(cancellationToken: cancellationToken);
+        
         await DeclareAsync(channel, "stock.product-created", Topics.ProductCreated, cancellationToken);
         await DeclareAsync(channel, "product.stock-changed", Topics.StockChanged, cancellationToken);
     }
@@ -23,14 +24,22 @@ public static class RabbitTopology
     {
         await channel.ExchangeDeclareAsync(Exchange, ExchangeType.Topic,
             durable: true, cancellationToken: cancellationToken);
+        
         await channel.ExchangeDeclareAsync("deadletters", ExchangeType.Topic,
             durable: true, cancellationToken: cancellationToken);
+        
         await channel.QueueDeclareAsync(queue + ".dead", durable: true, exclusive: false,
             autoDelete: false, cancellationToken: cancellationToken);
+        
         await channel.QueueBindAsync(queue + ".dead", "deadletters", topic, cancellationToken: cancellationToken);
+        
         await channel.QueueDeclareAsync(queue, durable: true, exclusive: false, autoDelete: false,
             arguments: new Dictionary<string, object?> { ["x-dead-letter-exchange"] = "deadletters" },
             cancellationToken: cancellationToken);
+        
         await channel.QueueBindAsync(queue, Exchange, topic, cancellationToken: cancellationToken);
     }
 }
+
+// RabbitTopology: RabbitMQ exchange, kuyruk ve topic yönlendirme bağlarını oluşturur.
+// İlk olay yayımlanmadan iki servisin aboneliklerini hazırlar; işlenemeyen mesajlar için dead-letter kuyruklarını tanımlar.
