@@ -9,8 +9,6 @@ using Product.Application.Abstractions;
 using Product.Application.Commands.CreateProduct;
 using Product.Infrastructure.Messaging;
 using Product.Infrastructure.Repositories;
-using Product.Infrastructure.Idempotency;
-using Shared.Application.Abstractions;
 using BuildingBlocks.Observability;
 using Product.Infrastructure.Observability;
 
@@ -35,8 +33,6 @@ public static class DependencyInjection
         services.AddScoped<IMessageHandler, StockChangedHandler>();
         services.AddScoped<IOutboxMessageFactory, ProductOutboxMessageFactory>();
         services.AddServiceInfrastructure<ProductDbContext>(configuration, "product-service", "product:");
-        services.AddScoped<IProductCreationReceiptStore, ProductCreationReceiptStore>();
-        services.AddScoped<IUnitOfWork, ProductUnitOfWork>();
         return services;
     }
 

@@ -9,8 +9,6 @@ using Product.Application.Queries.GetProductById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Shared.Presentation.Security;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 
 namespace Product.Api.Controllers;
 
@@ -36,16 +34,12 @@ public sealed class ProductsController(ISender mediatr) : ControllerBase
     [Authorize(Policy = ApiPolicies.ProductWrite)]
     [ProducesResponseType<ProductDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProductDto>> Create(
         [FromBody] CreateProductRequest request,
-        [FromHeader(Name = "Idempotency-Key"), Required, StringLength(128)] string idempotencyKey,
         CancellationToken cancellationToken)
     {
-        var result = await mediatr.Send(new CreateProductCommand(request.Name, request.Price, idempotencyKey,
-            User.FindFirstValue("sub")!), cancellationToken);
-        Response.Headers["Idempotency-Replayed"] = result.Replayed ? "true" : "false";
-        return CreatedAtAction(nameof(GetById), new { id = result.Product.Id }, result.Product);
+        var product = await mediatr.Send(new CreateProductCommand(request.Name, request.Price), cancellationToken);
+        return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
     }
 
     [HttpPut("{id:guid}")]

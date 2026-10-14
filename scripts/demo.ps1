@@ -14,7 +14,6 @@ foreach ($line in (Get-Content -LiteralPath (Join-Path $projectRoot '.env'))) {
 if (-not $values['RABBITMQ_PASSWORD']) { throw '.env dosyasinda RABBITMQ_PASSWORD gerekli.' }
 $accessToken = & (Join-Path $PSScriptRoot 'get-dev-token.ps1') -Role admin
 $apiHeaders = @{ Authorization = 'Bearer ' + $accessToken }
-$createHeaders = @{ Authorization = 'Bearer ' + $accessToken; 'Idempotency-Key' = ('demo-' + [Guid]::NewGuid()) }
 
 foreach ($port in @(5001, 5002)) {
     $null = Invoke-RestMethod -Uri "http://localhost:$port/health/ready" -TimeoutSec 10
@@ -41,7 +40,7 @@ foreach ($topic in @('product.created', 'stock.changed')) {
 
 $productBody = @{ name = $ProductName; price = 1250.50 } | ConvertTo-Json
 $product = Invoke-RestMethod -Method Post -Uri 'http://localhost:5000/products' `
-    -Headers $createHeaders -ContentType 'application/json' -Body $productBody -TimeoutSec 10
+    -Headers $apiHeaders -ContentType 'application/json' -Body $productBody -TimeoutSec 10
 Write-Output "Urun olusturuldu: $($product.id)"
 
 $stock = $null

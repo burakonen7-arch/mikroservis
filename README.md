@@ -129,7 +129,7 @@ Okuma ve yazma modelleri/interface'leri ayrıdır; her mikroservis mevcut tek ve
 
 ## Docker ile çalıştırma
 
-Gateway, JWT, Idempotency-Key, rate limiting ve yeni trace alanları için [kullanım rehberi](docs/gateway-security.md). İş endpoint'leri artık token gerektirir; ürün oluştururken `Idempotency-Key` zorunludur.
+Gateway, JWT, rate limiting ve trace alanları için [kullanım rehberi](docs/gateway-security.md). İş endpoint'leri token gerektirir.
 
 Gereksinimler: Linux x64/uyumlu Docker ortamı, Docker Compose v2, yaklaşık 12 GB boş alan ve en az 4 GB RAM. Oracle ilk açılışı birkaç dakika sürebilir. Docker `vfs` sürücüsü katmanları kopyaladığından daha fazla disk gerektirir; `overlay2` önerilir.
 
@@ -139,7 +139,7 @@ Gereksinimler: Linux x64/uyumlu Docker ortamı, Docker Compose v2, yaklaşık 12
 docker compose up -d --build
 ```
 
-Gateway portu 5000, Product portu 5001, Stock portu 5002. RabbitMQ yönetimi 15672; geliştirme kullanıcısı `mikroservis`, parola `.env` içindedir. Bütün host portları yalnızca loopback'e bağlanır. MongoDB tek düğümlü replica set olarak başlatılır: ürün, idempotency receipt ve outbox kaydının aynı transaction içinde yazılabilmesi için gereklidir. Oracle uygulama kullanıcısı `stock`, PDB `FREEPDB1`.
+Gateway portu 5000, Product portu 5001, Stock portu 5002. RabbitMQ yönetimi 15672; geliştirme kullanıcısı `mikroservis`, parola `.env` içindedir. Bütün host portları yalnızca loopback'e bağlanır. MongoDB tek düğümlü replica set olarak başlatılır: ürün ve outbox kaydının aynı transaction içinde yazılabilmesi için gereklidir. Oracle uygulama kullanıcısı `stock`, PDB `FREEPDB1`.
 
 Compose API'leri `Development` ortamında çalıştırır. Swagger UI yalnızca bu ortamda açıktır: Product için `http://localhost:5001/swagger/index.html`, Stock için `http://localhost:5002/swagger/index.html`. OpenAPI belgeleri her API'de `/swagger/v1/swagger.json` adresindedir. RabbitMQ yönetim paneli `http://localhost:15672` adresindedir. API'leri Docker dışında çalıştırırken Swagger için `ASPNETCORE_ENVIRONMENT=Development` ayarlayın.
 
@@ -180,7 +180,7 @@ python3 scripts/stop-local.py
 
 ```bash
 # TOKEN: Gateway /auth/token üzerinden alınan accessToken (15 dakika geçerli).
-curl -sS -H "Authorization: Bearer $TOKEN" -H 'Idempotency-Key: product-demo-001' -H 'Content-Type: application/json' \
+curl -sS -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
   -d '{"name":"Klavye","price":1250.50}' http://localhost:5000/products
 # Dönen id ile; RabbitMQ tüketimi asenkron olduğundan ilk stok isteği kısa süre 404 dönebilir.
 curl -sS -H "Authorization: Bearer $TOKEN" http://localhost:5000/stocks/PRODUCT_ID
@@ -198,7 +198,7 @@ curl -sS -H "Authorization: Bearer $TOKEN" http://localhost:5000/products/PRODUC
 
 Cache anahtarları servis bazında ayrılır. Query handler'ları Redis cache-aside kullanır (30 saniye TTL); değişiklikler ilgili kaydı geçersizleştirir. Redis kesintisi readiness'i başarısız kılar. Eşzamanlı cache doldurma/geçersizleştirme yarışında görünüm en fazla TTL süresince eski kalabilir.
 
-Teslimat **at least once**'dır; exactly once iddiası yoktur. Tüketici başarısız mesajı bir kez yeniden teslim eder; ikinci başarısızlık mesajı `deadletters` exchange ve `<queue>.dead` kuyruğuna taşır. DLQ izlenmeli ve sorun çözüldükten sonra mesaj tekrar yayınlanmalıdır. Ürün oluşturmanın HTTP tekrarları `Idempotency-Key` ve kalıcı MongoDB receipt kaydıyla korunur. Birden fazla worker instance aynı outbox mesajını yayınlayabilir; tüketiciler tekrarları tolere eder. Gelişmiş retry/DLQ yönetimi ve entegrasyon testleri bu değişikliğin kapsamında değildir.
+Teslimat **at least once**'dır; exactly once iddiası yoktur. Tüketici başarısız mesajı bir kez yeniden teslim eder; ikinci başarısızlık mesajı `deadletters` exchange ve `<queue>.dead` kuyruğuna taşır. DLQ izlenmeli ve sorun çözüldükten sonra mesaj tekrar yayınlanmalıdır. Ürün oluşturma endpoint'ine gönderilen her başarılı istek yeni bir ürün oluşturur. Birden fazla worker instance aynı outbox mesajını yayınlayabilir; tüketiciler tekrarları tolere eder. Gelişmiş retry/DLQ yönetimi ve entegrasyon testleri bu değişikliğin kapsamında değildir.
 
 ## OpenTelemetry / New Relic
 

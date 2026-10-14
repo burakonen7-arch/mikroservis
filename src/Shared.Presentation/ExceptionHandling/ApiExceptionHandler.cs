@@ -13,7 +13,6 @@ public sealed class ApiExceptionHandler : IExceptionHandler
     {
         var (statusCode, title, detail) = exception switch
         {
-            IdempotencyConflictException => (StatusCodes.Status409Conflict, "Idempotency conflict", exception.Message),
             ArgumentException => (StatusCodes.Status400BadRequest, "Invalid request", exception.Message),
             OverflowException => (StatusCodes.Status400BadRequest, "Stock quantity overflow", "The stock quantity or version exceeds its supported range."),
             ConcurrentUpdateException => (StatusCodes.Status409Conflict, "Concurrent update", "Reload the resource and retry with the current version."),

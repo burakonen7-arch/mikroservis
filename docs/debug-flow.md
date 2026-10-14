@@ -32,7 +32,7 @@ endpoint'ini API sürecine aktarır. Parolaları `appsettings.json` içine yazma
 - RabbitMQ: http://localhost:15672
 
 Breakpoint'ler mevcut Rider oturumuna eklendi. Başka bir workspace/IDE'de aşağıdaki
-tablodaki metodlara breakpoint koyabilirsiniz. Yeni idempotency ve telemetry adımları nedeniyle
+tablodaki metodlara breakpoint koyabilirsiniz. Kod değişiklikleri nedeniyle
 satır numaraları değişebilir; controller/handler/worker metotlarını esas alın.
 
 ## Bir ürün oluştururken duraklar
@@ -40,7 +40,6 @@ satır numaraları değişebilir; controller/handler/worker metotlarını esas a
 Product Swagger'da `POST /products` isteğini şu gövdeyle gönderin:
 
 Önce `scripts/get-dev-token.ps1` ile token alıp Swagger Authorize alanına girin.
-`Idempotency-Key` başlığını her yeni ürün için farklı bir değerle doldurun.
 
 ```json
 {"name":"Debug Klavye","price":1250.50}

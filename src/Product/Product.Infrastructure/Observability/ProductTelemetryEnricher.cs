@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using BuildingBlocks.Observability;
 using Product.Application.Commands.ApplyStockProjection;
-using Product.Application.Commands.CreateProduct;
 using Product.Application.Commands.RemoveProduct;
 using Product.Application.Commands.UpdateProduct;
 using Product.Application.DTOs;
@@ -24,8 +23,7 @@ public sealed class ProductTelemetryEnricher : IRequestTelemetryEnricher
                 activity?.SetTag("stock.version", command.Version);
                 break;
         }
-        var product = response switch { ProductDto dto => dto, CreateProductResult created => created.Product, _ => null };
-        if (product is not null)
+        if (response is ProductDto product)
         {
             activity?.SetTag("product.id", product.Id);
             activity?.SetTag("product.name", product.Name);
@@ -33,6 +31,5 @@ public sealed class ProductTelemetryEnricher : IRequestTelemetryEnricher
             activity?.SetTag("stock.quantity", product.AvailableQuantity);
             activity?.SetTag("stock.version", product.StockVersion);
         }
-        if (response is CreateProductResult result) activity?.SetTag("idempotency.replayed", result.Replayed);
     }
 }

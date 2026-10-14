@@ -20,8 +20,8 @@ public sealed class RequestTelemetryBehavior<TRequest, TResponse>(
             var response = await next();
             enricher.Enrich(activity, request, response);
             var elapsed = Stopwatch.GetElapsedTime(started).TotalMilliseconds;
-            logger.LogInformation("Operation {Operation} completed in {DurationMs} ms. ProductId={ProductId}; Replayed={Replayed}",
-                operation, elapsed, activity?.GetTagItem("product.id"), activity?.GetTagItem("idempotency.replayed"));
+            logger.LogInformation("Operation {Operation} completed in {DurationMs} ms. ProductId={ProductId}",
+                operation, elapsed, activity?.GetTagItem("product.id"));
             return response;
         }
         catch (Exception exception)

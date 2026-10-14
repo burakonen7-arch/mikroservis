@@ -17,7 +17,7 @@ Invoke-RestMethod http://localhost:5002/health/ready
 
 ## API ekranları
 
-JWT ve Idempotency-Key kullanımı: [Gateway rehberi](gateway-security.md).
+JWT kullanımı: [Gateway rehberi](gateway-security.md).
 
 - Gateway Swagger: http://localhost:5000/swagger/index.html
 - Product Swagger: http://localhost:5001/swagger/index.html

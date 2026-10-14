@@ -1,4 +1,4 @@
-# Gateway, JWT, Idempotency-Key ve rate limiting
+# Gateway, JWT ve rate limiting
 
 Gateway: **http://localhost:5000/swagger/index.html**. Üstteki belge listesinden Gateway login, Product veya Stock seçilir. Product ve Stock'un doğrudan Swagger adresleri 5001/5002 portlarında da kullanılabilir. İşlem endpoint'leri hem Gateway'de hem servislerde JWT gerektirir; health endpoint'leri anonimdir.
 
@@ -42,16 +42,15 @@ Swagger'daki `POST /auth/token` de kullanılabilir:
 
 Yerel token endpoint'i yalnızca Development ortamında çalışır; Production ortamında 404 döner. Bu bir kullanıcı kayıt/kimlik yönetimi servisi değildir. Üretimde kimlik sağlayıcısı ve ona uygun JWT issuer/audience/signature ayarları kullanılmalıdır. Mevcut doğrulama HS256 imzası, issuer, audience ve süreyi kontrol eder. Signing key environment/secret ayarında bulunur.
 
-## Ürün oluşturma tekrarları
+## Ürün oluşturma
 
-`POST /products` için `Idempotency-Key` başlığı zorunludur. Swagger'daki bu alanı örneğin `product-demo-001` ile doldurun. Aynı mantıksal işlem tekrarlandığında aynı anahtarı; yeni ürün için yeni anahtarı kullanın.
+`POST /products` için JWT ile yetkilendirme yaptıktan sonra ürün adı ve fiyatını gönderin:
 
-- Aynı kullanıcı + anahtar + normalize edilmiş ad/fiyat: aynı ürün ve ilk 201 yanıtındaki DTO geri döner; `Idempotency-Replayed: true` olur.
-- Aynı kullanıcı + anahtar + farklı veri: 409 Problem Details.
-- Eksik/uygunsuz anahtar: 400. Anahtar 1–128 ASCII harf, sayı, `.`, `:`, `_`, `-` içerebilir.
-- Eşzamanlı istekte kazanan işlem ürün, Outbox ve receipt'i aynı MongoDB transaction'ında kaydeder. Diğeri kayıt görünürse cevabı tekrar oynatır; commit henüz görünmüyorsa 409 alır ve aynı veri/anahtarla yeniden gönderilebilir.
+```json
+{"name":"Klavye","price":1250.50}
+```
 
-Receipt kimliği kullanıcı ve anahtarın SHA-256 birleşimidir; `product_creation_requests` koleksiyonunun benzersiz `_id` alanı çakışmayı önler. Kayıtlar servis yeniden başlatıldığında da korunur. Şu anda otomatik receipt temizleme/süre aşımı yoktur. Ürün sonra güncellense/silinse de tekrar oynatılan yanıt ilk oluşturma yanıtıdır. Bu özellik ürün oluşturma endpoint'i içindir; stok hareketlerinde mevcut `expectedVersion` kontrolü devam eder.
+Her başarılı istek yeni bir ürün oluşturur ve 201 yanıtında ürün DTO'sunu döndürür. Ürün ve Outbox kaydı aynı MongoDB transaction'ında kaydedilir. Stok hareketlerinde `expectedVersion` kontrolü uygulanır.
 
 ## İstek sınırları
 
@@ -69,7 +68,7 @@ Traces ekranında HTTP → Gateway → servis → command/query → veritabanı/
 - Command/query adları: `CreateProductCommand`, `GetProductByIdQuery`, `AdjustStockCommand` vb.
 - MongoDB/Oracle okuma ve `database.SaveChanges` süreleri.
 - `redis.GET`, `redis.SET`, `redis.DEL`; `cache.result=hit/miss`, anahtar ve TTL.
-- Ürün kimliği/adı/fiyatı, stok miktarı/sürümü ve `idempotency.replayed` alanları.
+- Ürün kimliği/adı/fiyatı ve stok miktarı/sürümü alanları.
 - Mesaj kimliği, routing key, consumer kuyruğu ve redelivery bilgisi.
 
 Structured logs başarılı application işlemlerini, cache hit/miss ve mesaj publish/consume sonuçlarını trace bağlantısıyla gösterir. Metrics'te `cache.hits` ve `cache.misses` sayaçları vardır. Ham HTTP/mesaj gövdeleri, JWT veya parolalar trace'e yazılmaz. Veritabanı span'ları repository/Unit of Work düzeyindedir; her SQL/MQL komutu ayrı instrument edilmez.
