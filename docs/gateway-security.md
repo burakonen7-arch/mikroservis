@@ -27,6 +27,11 @@ Token almak için:
 
 Çıktıdaki token'ı Swagger **Authorize** alanına yapıştırın. Script parolayı `.env` dosyasından okur. Token 15 dakika geçerlidir; süresi dolunca yeniden alınır. Token veya `.env` Git'e eklenmez.
 
+Token almak için Gateway'in `localhost:5000` üzerinde çalışması gerekir. Rider'da
+**Gateway Debug** veya üç servisi birlikte açan **Mikroservis Debug** yapılandırmasını kullanın.
+Login breakpoint'inde durursa Gateway oturumunda **Resume** yapın. Script bu işlem için
+varsayılan 120 saniye bekler; gerekirse `-TimeoutSec` parametresiyle süreyi değiştirebilirsiniz.
+
 Swagger'daki `POST /auth/token` de kullanılabilir:
 
 ```json

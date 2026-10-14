@@ -1,0 +1,57 @@
+{
+  "description": "Rider'daki aktif breakpoint'ler: ürün oluşturma → outbox → RabbitMQ → Stock consumer → stok oluşturma. Satırlar 1 tabanlıdır. Ortak kodlardaki koşullar yalnızca ProductCreatedEvent/product.created akışında durmayı sağlar.",
+  "breakpoints": [
+    {
+      "file": "src/Product/Product.Api/Controllers/ProductsController.cs",
+      "line": 41,
+      "group": "Product",
+      "description": "Ürün ekleme isteği controller'dan CreateProductCommand'a aktarılır.",
+      "watch": "request.Name, request.Price"
+    },
+    {
+      "file": "src/Product/Product.Application/Commands/CreateProduct/CreateProductCommandHandler.cs",
+      "line": 19,
+      "group": "Product",
+      "description": "Oluşturulan ürün için ProductCreatedEvent outbox'a eklenir.",
+      "watch": "product.Id, product.Name"
+    },
+    {
+      "file": "src/BuildingBlocks/Persistence/EfUnitOfWork.cs",
+      "line": 13,
+      "group": "Outbox",
+      "description": "ProductCreatedEvent outbox kaydına dönüştürülüp DbContext'e eklenir.",
+      "watch": "applicationEvent, db",
+      "condition": "applicationEvent.GetType().Name == \"ProductCreatedEvent\""
+    },
+    {
+      "file": "src/BuildingBlocks/Messaging/Workers/OutboxWorker.cs",
+      "line": 101,
+      "group": "RabbitMQ",
+      "description": "Outbox'taki product.created mesajı RabbitMQ'ya yayımlanır.",
+      "watch": "message.Topic, message.Payload, message.TraceParent, properties.Headers",
+      "condition": "message.Topic == \"product.created\""
+    },
+    {
+      "file": "src/BuildingBlocks/Messaging/Workers/ConsumerWorker.cs",
+      "line": 80,
+      "group": "Consumer",
+      "description": "Stock servisinde alınan product.created mesajı ProductCreatedHandler'a aktarılır.",
+      "watch": "delivery.RoutingKey, payload, handler",
+      "condition": "delivery.RoutingKey == \"product.created\""
+    },
+    {
+      "file": "src/Stock/Stock.Infrastructure/Messaging/ProductCreatedHandler.cs",
+      "line": 17,
+      "group": "Stock",
+      "description": "Mesaj ProductCreated sözleşmesine çözümlenir, ardından InitializeStockCommand gönderilir.",
+      "watch": "topic, payload"
+    },
+    {
+      "file": "src/Stock/Stock.Application/Commands/InitializeStock/InitializeStockCommandHandler.cs",
+      "line": 20,
+      "group": "Stock",
+      "description": "Ürün için başlangıç stok kaydı oluşturulur.",
+      "watch": "command.ProductId"
+    }
+  ]
+}

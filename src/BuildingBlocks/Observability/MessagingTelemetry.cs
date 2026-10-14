@@ -8,10 +8,12 @@ public static class MessagingTelemetry
     public static void Enrich(Activity? activity, string topic, string payload, string? messageId)
     {
         if (activity is null) return;
+        
         activity.SetTag("messaging.system", "rabbitmq");
         activity.SetTag("messaging.destination.name", "microservices");
         activity.SetTag("messaging.rabbitmq.destination.routing_key", topic);
         activity.SetTag("messaging.message.id", messageId);
+        
         try
         {
             using var json = JsonDocument.Parse(payload);

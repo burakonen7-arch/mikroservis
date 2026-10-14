@@ -1,0 +1,29 @@
+@UserApi = http://localhost:5003
+
+### All 100 dummy users
+GET {{UserApi}}/users?pageSize=100
+Accept: application/json
+
+### City and age filters
+GET {{UserApi}}/users?city=Ankara&minAge=25&maxAge=45
+Accept: application/json
+
+### Search and pagination
+GET {{UserApi}}/users?search=Ali&page=1&pageSize=10
+Accept: application/json
+
+### One user
+GET {{UserApi}}/users/1
+Accept: application/json
+
+### Create a user (repeating the same email returns 409)
+POST {{UserApi}}/users
+Content-Type: application/json
+
+{
+  "firstName": "Burak",
+  "lastName": "Onen",
+  "email": "burak@example.com",
+  "age": 30,
+  "city": "Istanbul"
+}

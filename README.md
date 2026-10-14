@@ -1,6 +1,8 @@
-# Product / Stock mikroservisleri
+# Product / Stock / User servisleri
 
 .NET 10, EF Core 10, MongoDB, Oracle, RabbitMQ, Redis ve OpenTelemetry kullanan iki bağımsız HTTP servisi. İki servis de Clean Architecture ve MediatR tabanlı CQRS ile düzenlenmiştir: controller HTTP işlemlerini, application command/query handler'ları kullanım senaryolarını, domain entity iş kurallarını, infrastructure ise veri erişimi ve dış sistem entegrasyonlarını yönetir. Controller ve mesaj tüketicileri `ISender.Send(...)` ile ilgili handler'a yönlendirilir.
+
+SQL pratiği için ayrıca [bağımsız User servisi](docs/user-sql-practice.md) vardır. Bu servis Onion/Clean katmanlarıyla düzenlenmiştir; yalnızca PostgreSQL ve EF Core kullanır. GET sorguları EF Core üzerinden raw SQL ile, POST ise entity takibi ve `SaveChangesAsync` ile çalışır. GET/POST endpoint'leri ve 100 örnek kullanıcı içerir. Kendi `compose.user.yaml` dosyasıyla çalışır; Gateway, Product, Stock veya ortak servis altyapısına bağlanmaz.
 
 ```mermaid
 flowchart LR
@@ -66,7 +68,7 @@ flowchart LR
     SharedPresentation --> SharedApplication
 ```
 
-Her servisin klasör yapısı aynıdır:
+Product ve Stock servislerinin klasör yapısı aynıdır:
 
 ```text
 Product.Domain/Entities/ProductItem.cs
@@ -129,7 +131,7 @@ Okuma ve yazma modelleri/interface'leri ayrıdır; her mikroservis mevcut tek ve
 
 ## Docker ile çalıştırma
 
-Gateway, JWT, rate limiting ve trace alanları için [kullanım rehberi](docs/gateway-security.md). İş endpoint'leri token gerektirir.
+Gateway, JWT, rate limiting ve trace alanları için [kullanım rehberi](docs/gateway-security.md). Product ve Stock iş endpoint'leri token gerektirir. Bağımsız User servisi için [SQL pratiği rehberini](docs/user-sql-practice.md) kullanın.
 
 Gereksinimler: Linux x64/uyumlu Docker ortamı, Docker Compose v2, yaklaşık 12 GB boş alan ve en az 4 GB RAM. Oracle ilk açılışı birkaç dakika sürebilir. Docker `vfs` sürücüsü katmanları kopyaladığından daha fazla disk gerektirir; `overlay2` önerilir.
 

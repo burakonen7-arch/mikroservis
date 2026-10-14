@@ -5,6 +5,7 @@ namespace BuildingBlocks.Observability;
 
 public static class OperationTelemetry
 {
+    // = new(""mikroservis.Application ya da Persistance) = span için izleme kaynağı oluşturur.
     public static readonly ActivitySource Application = new("Mikroservis.Application");
     public static readonly ActivitySource Persistence = new("Mikroservis.Persistence");
     public static readonly ActivitySource Cache = new("Mikroservis.Cache");

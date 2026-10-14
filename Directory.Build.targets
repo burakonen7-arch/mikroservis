@@ -17,6 +17,10 @@
       <InvalidCoreReference Include="@(ProjectReference)"
         Condition="'%(ProjectReference.Filename)' != 'Stock.Domain' And '%(ProjectReference.Filename)' != 'Shared.Application'" />
     </ItemGroup>
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'User.Application'">
+      <InvalidCoreReference Include="@(ProjectReference)"
+        Condition="'%(ProjectReference.Filename)' != 'User.Domain'" />
+    </ItemGroup>
     <ItemGroup Condition="'$(IsApplicationProject)' == 'True'">
       <InvalidApplicationPackage Include="@(PackageReference)"
         Condition="'%(PackageReference.Identity)' != 'MediatR' Or ('$(MSBuildProjectName)' != 'Product.Application' And '$(MSBuildProjectName)' != 'Stock.Application')" />
@@ -25,9 +29,9 @@
     <Error Condition="'$(IsDomainProject)' == 'True' And ('@(ProjectReference)' != '' Or '@(PackageReference)' != '' Or '@(ExternalFrameworkReference)' != '')"
       Text="Domain projects must remain independent of other projects and external frameworks." />
     <Error Condition="'@(InvalidCoreReference)' != ''"
-      Text="Application may reference only its own Domain and Shared.Application: @(InvalidCoreReference)." />
+      Text="Application projects may reference only permitted inner layers: @(InvalidCoreReference)." />
     <Error Condition="'$(IsApplicationProject)' == 'True' And ('@(InvalidApplicationPackage)' != '' Or '@(ExternalFrameworkReference)' != '')"
-      Text="Application projects may use only MediatR for use-case dispatch; database, HTTP and infrastructure frameworks belong in outer layers." />
+      Text="Only Product.Application and Stock.Application may use MediatR; other Application projects must not reference external packages or frameworks." />
     <Error Condition="'$(MSBuildProjectName)' == 'Shared.Application' And '@(ProjectReference)' != ''"
       Text="Shared.Application must not reference service or infrastructure projects." />
     <Error Condition="'$(MSBuildProjectName)' == 'Contracts' And ('@(ProjectReference)' != '' Or '@(PackageReference)' != '' Or '@(ExternalFrameworkReference)' != '')"

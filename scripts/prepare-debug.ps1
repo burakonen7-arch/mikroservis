@@ -4,6 +4,30 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $envPath = Join-Path $projectRoot '.env'
 if (-not (Test-Path -LiteralPath $envPath)) { throw 'Once .env gelistirme parolalarini olusturun.' }
 
+$dockerExecutable = $null
+if (-not $SkipInfrastructure) {
+    $dockerCommand = Get-Command docker.exe -CommandType Application -ErrorAction SilentlyContinue
+    if ($dockerCommand) {
+        $dockerExecutable = $dockerCommand.Source
+    } else {
+        $dockerCandidates = @(
+            (Join-Path $env:LOCALAPPDATA 'Programs/DockerDesktop/resources/bin/docker.exe'),
+            (Join-Path $env:ProgramFiles 'Docker/Docker/resources/bin/docker.exe')
+        )
+        $dockerExecutable = $dockerCandidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+    }
+    if (-not $dockerExecutable) {
+        throw 'Docker CLI bulunamadi. Docker Desktop kurun veya docker.exe yolunu PATH ayarina ekleyin.'
+    }
+    # Fail before stopping APIs or changing local settings when the engine is unavailable.
+    try {
+        $null = & $dockerExecutable info --format '{{.ServerVersion}}' 2>&1
+        if ($LASTEXITCODE -ne 0) { throw 'Docker engine unavailable.' }
+    } catch {
+        throw 'Docker motoru hazir degil. Docker Desktop Linux engine baslatildiktan sonra scripti yeniden calistirin.'
+    }
+}
+
 $values = @{}
 foreach ($line in (Get-Content -LiteralPath $envPath)) {
     $parts = $line -split '=', 2
@@ -42,8 +66,12 @@ foreach ($service in @('Product', 'Stock', 'Gateway')) {
         OTEL_EXPORTER_OTLP_ENDPOINT = 'http://localhost:4317'
         OTEL_EXPORTER_OTLP_PROTOCOL = 'grpc'
         'Logging__LogLevel__Microsoft.EntityFrameworkCore' = 'Warning'
+        'Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command' = 'Information'
+        'Logging__LogLevel__Microsoft.AspNetCore.Hosting.Diagnostics' = 'Information'
+        'Logging__LogLevel__Microsoft.AspNetCore.Routing.EndpointMiddleware' = 'Information'
     }
     if ($service -eq 'Gateway') {
+        $settings['Logging__LogLevel__Yarp.ReverseProxy'] = 'Debug'
         foreach ($role in @('admin','reader','inventory','catalog')) {
             $settings['DevelopmentAuth__' + $role + '__Password'] = $values['AUTH_' + $role.ToUpperInvariant() + '_PASSWORD']
         }
@@ -76,18 +104,18 @@ foreach ($service in @('Gateway','Product','Stock')) {
 }
 Push-Location $projectRoot
 try {
-    & docker compose up -d --wait mongo oracle redis redisinsight rabbitmq aspire-dashboard otel-collector
+    & $dockerExecutable compose up -d --wait mongo oracle redis redisinsight rabbitmq aspire-dashboard otel-collector
     if ($LASTEXITCODE -ne 0) { throw 'Docker altyapisi baslatilamadi.' }
-    & docker compose run --rm mongo-init
+    & $dockerExecutable compose run --rm mongo-init
     if ($LASTEXITCODE -ne 0) { throw 'Mongo replica set hazirlanamadi.' }
-    & docker compose stop product-api stock-api gateway-api
+    & $dockerExecutable compose stop product-api stock-api gateway-api
     if ($LASTEXITCODE -ne 0) { throw 'Docker API servisleri durdurulamadi.' }
 } finally {
     Pop-Location
 }
 }
 
-if ($SkipInfrastructure) { Write-Output 'Yerel ayar dosyalari hazir; altyapi ve mevcut surecler korunuyor.' }
+if ($SkipInfrastructure) { Write-Output 'Yerel ayar dosyalari hazir. -SkipInfrastructure veritabanlarini veya Docker servislerini baslatmaz.' }
 else { Write-Output 'Altyapi hazir. Rider: Mikroservis Debug secip Debug baslatin.' }
 Write-Output 'Product: http://localhost:5001/swagger/index.html'
 Write-Output 'Stock: http://localhost:5002/swagger/index.html'

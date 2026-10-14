@@ -55,36 +55,57 @@ public sealed class OutboxWorker<TContext>(
         if (batch.Count == 0)
             return;
 
+        //rabbit üzerinden measj göndermek için kanal oluşturuluyor.
         await using var channel = await (await rabbit.GetAsync(cancellationToken)).CreateChannelAsync(
             new CreateChannelOptions(publisherConfirmationsEnabled: true, publisherConfirmationTrackingEnabled: true),
             cancellationToken);
   
+        //mesajların ilgili kuyruklara nasıl yönlendirileceği exxhange ile belirleniyor.
         await channel.ExchangeDeclareAsync(RabbitTopology.Exchange, ExchangeType.Topic,
             durable: true, cancellationToken: cancellationToken);
       
         foreach (var message in batch)
         {
+            //db'de tutulan outbox tablosundaki izleme kaydına bağlanmak için message'ın trace'i alınıyor
+            //sıfırdan bir trace oluşturmak yerine, mevcuttta bulunan trace işlemi alınmaktadır
+            //outbox tablosunda tutulan traceParent bilgisi okunuyor
             ActivityContext.TryParse(message.TraceParent, null, out var parent);
+         
+            //önceki trace bağlı, yeni bir span oluşturuluyor
             using var activity = RabbitTopology.Activities.StartActivity(message.Topic, ActivityKind.Producer, parent);
+            
+            //Rabbit üzerinden gelen mesajın içeriğinmi/detayını activitye eklemek için kullanılır.
             MessagingTelemetry.Enrich(activity, message.Topic, message.Payload, message.Id.ToString());
             activity?.SetTag("messaging.operation.name", "publish");
+            
+            //bu işlemler aslında, farklı servislerde gerçekleşen tüm adımların tek bir trace altında izlenmesini sağlamaktadır.
+            //örn trace:xyz123 trace'inde productService ürün ekledi, rabbit'e mesaj gönderildi, stockService bu mesajı alıp 
+            //stock düşürdü. bu 2 servis ve rabbit arasındaki tüm ilişkilerin hepsi aynı(xyz123) trace'i ile takip edilebilir.
+            
+            
+            //rabbit ile gönderilecek mesajın özellikleri belirlenir.
             var properties = new BasicProperties
             {
-                Persistent = true,
-                MessageId = message.Id.ToString(),
-                ContentType = "application/json",
-                Headers = new Dictionary<string, object?>()
+                Persistent = true, // mesajın kalıcı olarak saklanması hedeflenir
+                MessageId = message.Id.ToString(), // mesajın benzersiz kimliği
+                ContentType = "application/json", // json formatı
+                Headers = new Dictionary<string, object?>() //ek bilgiler eklemek için kullanılır
             };
+            
             if (Activity.Current is { } current)
                 properties.Headers["traceparent"] = current.Id;
 
             try
             {
+                
                 await channel.BasicPublishAsync(RabbitTopology.Exchange, message.Topic, mandatory: true,
                     basicProperties: properties, body: Encoding.UTF8.GetBytes(message.Payload),
                     cancellationToken: cancellationToken);
+                
                 message.SentAt = DateTime.UtcNow;
+                
                 await db.SaveChangesAsync(cancellationToken);
+                
                 logger.LogInformation("Published {Topic}. MessageId={MessageId}; ProductId={ProductId}",
                     message.Topic, message.Id, activity?.GetTagItem("product.id"));
             }
